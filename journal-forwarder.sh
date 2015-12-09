@@ -39,18 +39,31 @@ send() {
 }
 
 if [ \! -r "$cursor_loc" ]; then
-	echo "This appears to be the first run, going back 1 day."
-	set_cursor --since=-1day
+	logger --journald <<-END
+		MESSAGE_ID=f2e153ec33cc4037a9ca1a4180a598de
+		PRIORITY=5
+		MESSAGE=This appears to be the first run, going back 1 day.
+	END
 else
 	cursor="$(cat "$cursor_loc")"
 	if !(journalctl -q "-c$cursor" -n0); then
-		echo "Error: Saved cursor '$cursor' invalid."
-		echo 'Falling back to current time, may have missed messages.'
+		logger --journald <<-END
+			MESSAGE_ID=75a7247ca3324431b039a3d66ca39543
+			PRIORITY=3
+			INVALID_CURSOR=$cursor
+			MESSAGE=Invalid cursor. Falling back to current time, messages may be missed.
+			JOURNALD_RETURNED=$?
+		END
 		set_cursor
 	fi
 fi
 
-echo "Starting with cursor '$cursor'"
+logger --journald <<-END
+	MESSAGE_ID=4f56c3e133bc411383d7200165e2e866
+	PRIORITY=6
+	START_CURSOR=$cursor
+	MESSAGE=Starting with cursor '$cursor'
+END
 while true; do
 	lines="$(journalctl -q --after-cursor "$cursor" "-n$batch" -ojson)"
 	
@@ -61,7 +74,11 @@ while true; do
 	fi
 done
 
-echo 'Backlog consumed, transmitting logs live.'
+logger --journald <<-END
+	MESSAGE_ID=99a08cb1f53c4f51977dee49456fa507
+	PRIORITY=6
+	MESSAGE=Backlog consumed, transmitting logs live.
+END
 journalctl --after-cursor "$cursor" -qfojson | while read -r line; do
 	send "$line"
 done
