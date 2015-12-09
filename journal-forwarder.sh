@@ -35,11 +35,11 @@ send() {
 	save_cursor
 }
 
-if [ \! -r sumologic.cursor ]; then
+if [ \! -r "$cursor_loc" ]; then
 	echo "This appears to be the first run, going back 1 day."
 	set_cursor --since=-1day
 else
-	cursor="$(cat sumologic.cursor)"
+	cursor="$(cat "$cursor_loc")"
 	if !(journalctl -q "-c$cursor" -n0); then
 		echo "Error: Saved cursor '$cursor' invalid."
 		echo 'Falling back to current time, may have missed messages.'
