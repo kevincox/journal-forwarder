@@ -2,7 +2,10 @@
 
 set -eE
 
-url="${JF_URL:-$(cat "$JF_URL_SRC")"
+debug="$JF_DEBUG"
+unset JF_DEBUG
+
+[ -z "$debug" ] && url="${JF_URL:-$(cat "$JF_URL_SRC")}"
 unset JF_URL
 unset JF_URL_SRC
 
@@ -24,7 +27,11 @@ save_cursor() {
 
 send() {
 	cursor="$(tail -n1 <<<"$1" | jq -r '.__CURSOR')"
-	curl -sSfX POST -T - "$url" <<<"$1"
+	if [ -z "$debug" ]; then
+		curl -sSfX POST -T - "$url" <<<"$1"
+	else
+		echo "LOG: $1"
+	fi
 	save_cursor
 }
 
