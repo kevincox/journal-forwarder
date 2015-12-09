@@ -9,7 +9,7 @@ unset JF_DEBUG
 unset JF_URL
 unset JF_URL_SRC
 
-cursor_loc="${JF_CURSOR:-journal-forward.cursor}"
+cursor_loc="${JF_CURSOR:-journal-forwarder.cursor}"
 unset JF_CURSOR
 
 batch="${JF_BATCH:-100}"
