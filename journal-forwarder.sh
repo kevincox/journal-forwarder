@@ -31,7 +31,7 @@ save_cursor() {
 send() {
 	cursor="$(tail -n1 <<<"$1" | jq -r '.__CURSOR')"
 	if [ -z "$debug" ]; then
-		curl "-sSfX$method" -T - "$url" <<<"$1"
+		curl "-sSfX$method" -T - -o/dev/null "$url" <<<"$1"
 	else
 		echo "LOG: $1"
 	fi
