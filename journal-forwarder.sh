@@ -40,7 +40,7 @@ if [ \! -r sumologic.cursor ]; then
 	set_cursor --since=-1day
 else
 	cursor="$(cat sumologic.cursor)"
-	if !(journalctl -q "$cursor" -n0); then
+	if !(journalctl -q "-c$cursor" -n0); then
 		echo "Error: Saved cursor '$cursor' invalid."
 		echo 'Falling back to current time, may have missed messages.'
 		set_cursor
