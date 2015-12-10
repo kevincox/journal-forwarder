@@ -41,6 +41,7 @@ send() {
 if [ \! -r "$cursor_loc" ]; then
 	logger --journald <<-END
 		MESSAGE_ID=f2e153ec33cc4037a9ca1a4180a598de
+		SYSLOG_IDENTIFIER=journal-forwarder
 		PRIORITY=5
 		MESSAGE=This appears to be the first run, going back 1 day.
 	END
@@ -49,6 +50,7 @@ else
 	if !(journalctl -q "-c$cursor" -n0); then
 		logger --journald <<-END
 			MESSAGE_ID=75a7247ca3324431b039a3d66ca39543
+			SYSLOG_IDENTIFIER=journal-forwarder
 			PRIORITY=3
 			INVALID_CURSOR=$cursor
 			MESSAGE=Invalid cursor. Falling back to current time, messages may be missed.
@@ -60,6 +62,7 @@ fi
 
 logger --journald <<-END
 	MESSAGE_ID=4f56c3e133bc411383d7200165e2e866
+	SYSLOG_IDENTIFIER=journal-forwarder
 	PRIORITY=6
 	START_CURSOR=$cursor
 	MESSAGE=Starting with cursor '$cursor'
@@ -76,6 +79,7 @@ done
 
 logger --journald <<-END
 	MESSAGE_ID=99a08cb1f53c4f51977dee49456fa507
+	SYSLOG_IDENTIFIER=journal-forwarder
 	PRIORITY=6
 	MESSAGE=Backlog consumed, transmitting logs live.
 END
