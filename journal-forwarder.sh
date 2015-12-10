@@ -18,6 +18,9 @@ unset JF_BATCH
 method="${JF_METHOD:-POST}"
 unset JF_METHOD
 
+filter="${JF_FILTER:-.}"
+unset JF_FILTER
+
 set_cursor() {
 	cursor="$(journalctl "$@" -qn0 --show-cursor | \
 		sed -ne 's/^-- cursor: \(.*\)/\1/ p')"
@@ -30,10 +33,10 @@ save_cursor() {
 
 send() {
 	cursor="$(tail -n1 <<<"$1" | jq -r '.__CURSOR')"
-	if [ -z "$debug" ]; then
-		curl "-sSfX$method" -T - -o/dev/null "$url" <<<"$1"
+	jq -c "$filter" <<<"$1" | if [ -z "$debug" ]; then
+		curl "-sSfX$method" -T - -o/dev/null "$url"
 	else
-		echo "LOG: $1"
+		cat
 	fi
 	save_cursor
 }
