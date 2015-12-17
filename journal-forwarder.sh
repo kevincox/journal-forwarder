@@ -48,6 +48,7 @@ if [ \! -r "$cursor_loc" ]; then
 		PRIORITY=5
 		MESSAGE=This appears to be the first run, going back 1 day.
 	END
+	set_cursor '-S 1 day ago'
 else
 	cursor="$(cat "$cursor_loc")"
 	if !(journalctl -q "-c$cursor" -n0); then
