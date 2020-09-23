@@ -1,6 +1,11 @@
-with import <nixpkgs> {};
+{
+	nixpkgs ? import <nixpkgs> {},
 
-stdenv.mkDerivation {
+	lib ? nixpkgs.lib,
+	pkgs ? nixpkgs.pkgs,
+}:
+
+pkgs.stdenv.mkDerivation {
 	name = "journal-forwarder";
 	
 	meta = {
@@ -12,18 +17,18 @@ stdenv.mkDerivation {
 		(lib.hasPrefix (toString ./journal-forwarder.sh) name)
 	) ./.;
 	
-	buildInputs = [ makeWrapper ];
+	buildInputs = [ pkgs.makeWrapper ];
 	
 	installPhase = ''
 		install -Dm755 journal-forwarder.sh "$out/bin/journal-forwarder"
 		wrapProgram $out/bin/journal-forwarder \
-			--set PATH ${lib.makeBinPath [
+			--set PATH ${lib.makeBinPath (with pkgs; [
 				coreutils
 				curl
 				gnused
 				jq
 				systemd
 				utillinux
-			]}
+			])}
 	'';
 }
