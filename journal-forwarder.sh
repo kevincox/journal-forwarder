@@ -34,7 +34,7 @@ save_cursor() {
 send() {
 	cursor="$(tail -n1 <<<"$1" | jq -r '.__CURSOR')"
 	jq -c "$filter" <<<"$1" | if [ -z "$debug" ]; then
-		curl "-sSfX$method" -T - "$url"
+		curl "-sSfX$method" -HContent-Type:application/json -T - "$url" -o/dev/null
 	else
 		cat
 	fi
